@@ -15,8 +15,8 @@ class NoteService : INoteService {
         noteRepository.save(notes)
     }
 
-    override fun deleteNote(noteId: String) {
-        noteRepository.findAll().parallelStream().dropWhile { it.noteId.toString() == noteId }
+    override fun deleteNote(noteGuuId: String) {
+//        noteRepository.deleteAll(noteRepository.findAll().parallelStream().filter { it.noteGUUID == noteGuuId }.toList())
 
     }
 

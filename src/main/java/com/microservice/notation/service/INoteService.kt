@@ -6,7 +6,7 @@ import com.microservice.notation.models.Notes
 interface INoteService {
 
     fun saveNote(notes: Notes)
-    fun deleteNote(noteId: String)
+    fun deleteNote(noteGuuId: String)
     fun findNotesByUserId(userName: String):MutableList<Notes>
     fun findNotesByEmail(email: String):MutableList<Notes>
 }

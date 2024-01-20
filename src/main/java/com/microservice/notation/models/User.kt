@@ -11,6 +11,7 @@ class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+    var userId: String? = null
     var username: @NotBlank @Size(max = 20) String? = null
     var email: @NotBlank @Size(max = 50) @Email String? = null
     var password: @NotBlank @Size(max = 120) String? = null

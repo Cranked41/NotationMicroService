@@ -1,18 +1,14 @@
 package com.microservice.notation.controller
 
+import com.microservice.notation.extensions.GenerateGuuid
 import com.microservice.notation.models.Notes
 import com.microservice.notation.payload.response.MessageResponse
 import com.microservice.notation.service.NoteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -33,8 +29,8 @@ class NoteController {
         return ResponseEntity.ok(MessageResponse("Not Silindi"))
     }
 
-    @GetMapping("getNotesByUserId")
-    fun getUserNotesByUserId(@Valid @RequestBody userId: String): ResponseEntity<*> {
+    @GetMapping("getNotesByUserId/{userId}")
+    fun getUserNotesByUserId(@Valid @PathVariable userId: String): ResponseEntity<*> {
         return ResponseEntity.ok(noteService.findNotesByUserId(userId = userId))
     }
 }
