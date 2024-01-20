@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.util.UUID
 
 @Entity
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["username"]), UniqueConstraint(columnNames = ["email"])])
@@ -11,7 +12,7 @@ class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
-    var userId: String? = null
+    var userId: String = UUID.randomUUID().toString()
     var username: @NotBlank @Size(max = 20) String? = null
     var email: @NotBlank @Size(max = 50) @Email String? = null
     var password: @NotBlank @Size(max = 120) String? = null

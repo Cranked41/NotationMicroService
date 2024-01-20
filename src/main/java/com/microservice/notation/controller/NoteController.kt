@@ -1,11 +1,11 @@
 package com.microservice.notation.controller
 
-import com.microservice.notation.extensions.GenerateGuuid
 import com.microservice.notation.models.Notes
-import com.microservice.notation.payload.response.MessageResponse
+import com.microservice.notation.payload.response.ResponseModel
 import com.microservice.notation.service.NoteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -20,17 +20,17 @@ class NoteController {
     @PostMapping("saveNote")
     fun saveNote(@Valid @RequestBody notes: Notes): ResponseEntity<*> {
         noteService.saveNote(notes)
-        return ResponseEntity.ok(MessageResponse("ok"))
+        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = null))
     }
 
     @DeleteMapping("deleteNote")
     fun deleteNote(@Valid @RequestBody noteId: String): ResponseEntity<*> {
         noteService.deleteNote(noteId)
-        return ResponseEntity.ok(MessageResponse("Not Silindi"))
+        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(),"Not Silindi"))
     }
 
     @GetMapping("getNotesByUserId/{userId}")
     fun getUserNotesByUserId(@Valid @PathVariable userId: String): ResponseEntity<*> {
-        return ResponseEntity.ok(noteService.findNotesByUserId(userId = userId))
+        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = noteService.findNotesByUserId(userId = userId)))
     }
 }

@@ -1,6 +1,7 @@
 package com.microservice.notation.security.jwt
 
 import com.microservice.notation.security.services.UserDetailsServiceImpl
+import com.microservice.notation.utils.Localization
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.SignatureException
@@ -10,12 +11,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.util.StringUtils
-import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
@@ -23,9 +22,11 @@ class AuthTokenFilter : OncePerRequestFilter() {
     @Autowired
     private val jwtUtils: JwtUtils? = null
 
-
     @Autowired
     private val userDetailsService: UserDetailsServiceImpl? = null
+
+    @Autowired
+    private val localization: Localization? = null
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
@@ -52,7 +53,7 @@ class AuthTokenFilter : OncePerRequestFilter() {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Yetkisiz erişim")
         } catch (e: MalformedJwtException) {
             SecurityContextHolder.clearContext()
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Yetkisiz erişim tespit edildi")
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, localization?.getMessage("UnauthorizedAccess"))
         } catch (e: Exception) {
             Companion.logger.error("Cannot set user authentication: {}", e)
         }
