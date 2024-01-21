@@ -21,11 +21,7 @@ class NoteService : INoteService {
     }
 
     override fun findNotesByUserId(userId: String): MutableList<Notes> {
-        return noteRepository.findAll().parallelStream().filter { it.userId == userId }.toList()
-    }
-
-    override fun findNotesByEmail(email: String): MutableList<Notes> {
-        return noteRepository.findAll().parallelStream().filter { it.email == email }.toList()
+        return noteRepository.findAll().parallelStream().filter { it.userGuuId == userId }.toList()
     }
 
 }

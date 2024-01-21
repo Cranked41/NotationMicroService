@@ -1,6 +1,5 @@
 package com.microservice.notation.controller
 
-import com.microservice.notation.extensions.GenerateGuuid
 import com.microservice.notation.models.ERole
 import com.microservice.notation.models.Role
 import com.microservice.notation.models.User
@@ -24,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -76,11 +76,9 @@ class AuthController {
             return ResponseEntity.badRequest().body(ResponseModel(success = false, code = HttpStatus.BAD_REQUEST.value(), message = getMessage("EmailAlreadyTaken"), data = null))
         }
 
-        // Create new user's account
-        val user = User(signUpRequest.username, signUpRequest.email, encoder.encode(signUpRequest.password))
-        val id: Long = GenerateGuuid.getRandomGuid()
-        user.id = id
 
+        // Create new user's account
+        val user = User(username = signUpRequest.username, userGuuId = UUID.randomUUID().toString(), email = signUpRequest.email, password = encoder.encode(signUpRequest.password), name = signUpRequest.name, surname = signUpRequest.surname, phoneNumber = signUpRequest.phoneNumber, birthDate = signUpRequest.birthDate)
         val strRoles = signUpRequest.role
         val roles = HashSet<Role>()
 
@@ -110,12 +108,12 @@ class AuthController {
 
         user.roles = roles
         userRepository.save(user)
-        return ResponseEntity.ok(ResponseModel(success = true, code = HttpStatus.OK.value(), message = "User registered successfully!", data = null))
+        return ResponseEntity.ok(ResponseModel(success = true, code = HttpStatus.OK.value(), message = getMessage("UserRegisteredSuccessfully"), data = user.userGuuId))
     }
 
     @GetMapping("getUserInfo")
     fun getUserInfo(@Valid @RequestParam userId: String): ResponseEntity<*> {
-        val user = userRepository.findAll().filter { it?.userId == userId }
+        val user = userRepository.findAll().stream().filter { it?.userGuuId == userId }
         return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = user))
     }
 

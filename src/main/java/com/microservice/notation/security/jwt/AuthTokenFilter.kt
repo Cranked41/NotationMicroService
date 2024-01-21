@@ -43,7 +43,6 @@ class AuthTokenFilter : OncePerRequestFilter() {
                     throw MalformedJwtException("malformed")
                 }
             }
-            filterChain.doFilter(request, response)
         } catch (e: ExpiredJwtException) {
             // Token geçerli değilse veya süresi dolmuşsa UnauthorizedException fırlatılır
             SecurityContextHolder.clearContext()
@@ -57,6 +56,8 @@ class AuthTokenFilter : OncePerRequestFilter() {
         } catch (e: Exception) {
             Companion.logger.error("Cannot set user authentication: {}", e)
         }
+        filterChain.doFilter(request, response)
+
     }
 
     private fun parseJwt(request: HttpServletRequest): String? {

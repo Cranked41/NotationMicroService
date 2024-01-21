@@ -8,5 +8,4 @@ interface INoteService {
     fun saveNote(notes: Notes)
     fun deleteNote(noteGuuId: String)
     fun findNotesByUserId(userName: String):MutableList<Notes>
-    fun findNotesByEmail(email: String):MutableList<Notes>
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -17,16 +16,18 @@ class NoteController {
     @Autowired
     private lateinit var noteService: NoteService
 
+
     @PostMapping("saveNote")
     fun saveNote(@Valid @RequestBody notes: Notes): ResponseEntity<*> {
         noteService.saveNote(notes)
-        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = null))
+        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = true))
+
     }
 
     @DeleteMapping("deleteNote")
     fun deleteNote(@Valid @RequestBody noteId: String): ResponseEntity<*> {
         noteService.deleteNote(noteId)
-        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(),"Not Silindi"))
+        return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), "Not Silindi"))
     }
 
     @GetMapping("getNotesByUserId/{userId}")
