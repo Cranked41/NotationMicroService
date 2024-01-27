@@ -3,8 +3,8 @@ package com.microservice.notation.controller
 import com.microservice.notation.models.ERole
 import com.microservice.notation.models.Role
 import com.microservice.notation.models.User
-import com.microservice.notation.payload.request.LoginRequest
-import com.microservice.notation.payload.request.SignupRequest
+import com.microservice.notation.payload.request.LoginRequestModel
+import com.microservice.notation.payload.request.SignupRequestModel
 import com.microservice.notation.payload.response.JwtResponse
 import com.microservice.notation.payload.response.ResponseModel
 import com.microservice.notation.repository.RoleRepository
@@ -23,7 +23,6 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -51,9 +50,9 @@ class AuthController {
     lateinit var jwtUtils: JwtUtils
 
     @PostMapping("/signin")
-    fun authenticateUser(@Valid @RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
+    fun authenticateUser(@Valid @RequestBody loginRequestModel: LoginRequestModel): ResponseEntity<*> {
 
-        val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password))
+        val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(loginRequestModel.username, loginRequestModel.password))
 
         SecurityContextHolder.getContext().authentication = authentication
         val jwt = jwtUtils.generateJwtToken(authentication)
@@ -65,21 +64,21 @@ class AuthController {
     }
 
     @PostMapping("/signup")
-    fun registerUser(@RequestHeader(name = "Accept-Language", required = false) @Valid @RequestBody signUpRequest: SignupRequest): ResponseEntity<*> {
+    fun registerUser(@RequestHeader(name = "Accept-Language", required = false) @Valid @RequestBody signUpRequestModel: SignupRequestModel): ResponseEntity<*> {
 
 
-        if (userRepository.existsByUsername(signUpRequest.username)) {
+        if (userRepository.existsByUsername(signUpRequestModel.username)) {
             return ResponseEntity.badRequest().body(ResponseModel(success = false, code = HttpStatus.BAD_REQUEST.value(), message = getMessage("UsernameAlreadyTaken"), data = null))
         }
 
-        if (userRepository.existsByEmail(signUpRequest.email)) {
+        if (userRepository.existsByEmail(signUpRequestModel.email)) {
             return ResponseEntity.badRequest().body(ResponseModel(success = false, code = HttpStatus.BAD_REQUEST.value(), message = getMessage("EmailAlreadyTaken"), data = null))
         }
 
 
         // Create new user's account
-        val user = User(username = signUpRequest.username, userGuuId = UUID.randomUUID().toString(), email = signUpRequest.email, password = encoder.encode(signUpRequest.password), name = signUpRequest.name, surname = signUpRequest.surname, phoneNumber = signUpRequest.phoneNumber, birthDate = signUpRequest.birthDate)
-        val strRoles = signUpRequest.role
+        val user = User(username = signUpRequestModel.username, userGuuId = UUID.randomUUID().toString(), email = signUpRequestModel.email, password = encoder.encode(signUpRequestModel.password), name = signUpRequestModel.name, surname = signUpRequestModel.surname, phoneNumber = signUpRequestModel.phoneNumber, birthDate = signUpRequestModel.birthDate)
+        val strRoles = signUpRequestModel.role
         val roles = HashSet<Role>()
 
         if (strRoles == null) {
@@ -113,7 +112,7 @@ class AuthController {
 
     @GetMapping("getUserInfo")
     fun getUserInfo(@Valid @RequestParam userId: String): ResponseEntity<*> {
-        val user = userRepository.findAll().stream().filter { it?.userGuuId == userId }
+        val user = userRepository.findAll().filter { it?.userGuuId == userId }.first()
         return ResponseEntity.ok(ResponseModel.success(code = HttpStatus.OK.value(), data = user))
     }
 

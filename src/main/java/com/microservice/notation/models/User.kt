@@ -1,5 +1,6 @@
 package com.microservice.notation.models
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.microservice.notation.extensions.GenerateGuuid
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
@@ -20,7 +21,7 @@ data class User(
         var phoneNumber: Int? = null,
         var username: @NotBlank @Size(max = 20) String? = null,
         var email: @NotBlank @Size(max = 50) @Email String? = null,
-        var password: @NotBlank @Size(max = 120) String? = null,
+        @JsonIgnore var password: @NotBlank @Size(max = 120) String? = null,
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         var birthDate: LocalDate? = null,
 
